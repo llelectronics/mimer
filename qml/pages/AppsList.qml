@@ -6,7 +6,7 @@ import harbour.mimer.DesktopFileSortModel 1.0
 Page {
     id: page
 
-    signal selected(string name, string exec)
+    signal selected(string name, string icon, string exec)
     property bool searchEnabled: false
     property variant selectedValues: []
 
@@ -19,7 +19,7 @@ Page {
             MenuItem {
                 text: qsTr("Reset / Set default")
                 onClicked: {
-                    selected("Default", "")
+                    selected("Default", "", "")
                     pageStack.pop()
                 }
             }
@@ -138,7 +138,7 @@ Page {
 
             onClicked: {
                 if (shortcutsRepeater.enabled) {
-                    selected(model.name,model.exec)
+                    selected(model.name,model.icon,model.exec)
                     pageStack.pop();
                 }
             }

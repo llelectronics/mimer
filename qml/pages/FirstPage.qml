@@ -60,31 +60,43 @@ Page {
             PageHeader {
                 title: qsTr("Set default apps")
             }
-            ValueButton {
-                id: browserChooseBtn
-                x: Theme.paddingLarge
-                label: qsTr("Browser")
-                value: qsTr("Change")
-                property string exec
-                onClicked: {
-                    var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
-                    selector.selected.connect(function(name,exec) {
-                        if (name !== "Default") {
-                            browserChooseBtn.value = name;
-                            if ((exec.indexOf("%u") !=-1) || (exec.indexOf("%U") != -1)) {
-                                browserChooseBtn.exec = exec;
+            Row {
+                width: parent.width
+                IconButton {
+                    id: browserIcon
+                    icon.source: "image://theme/icon-launcher-browser"
+                    width: 86
+                    height: 86
+                    x: Theme.paddingLarge
+                }
+
+                ValueButton {
+                    id: browserChooseBtn
+                    label: qsTr("Browser")
+                    value: qsTr("Change")
+                    property string exec
+                    onClicked: {
+                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
+                        selector.selected.connect(function(name,icon,exec) {
+                            if (name !== "Default") {
+                                browserChooseBtn.value = name;
+                                if (icon.length !== 0) browserIcon.icon.source = icon;
+                                if ((exec.indexOf("%u") !=-1) || (exec.indexOf("%U") != -1)) {
+                                    browserChooseBtn.exec = exec;
+                                }
+                                else { browserChooseBtn.exec = exec + " '%U'"; }
+                                console.debug("Selected: " + browserChooseBtn.value + " with exec: " + browserChooseBtn.exec + " and icon image: " + icon)
+                                _helper.setDefaultBrowser(browserChooseBtn.exec);
                             }
-                            else { browserChooseBtn.exec = exec + " '%U'"; }
-                            console.debug("Selected: " + browserChooseBtn.value + " with exec: " + browserChooseBtn.exec)
-                            _helper.setDefaultBrowser(browserChooseBtn.exec);
-                        }
-                        else {
-                            browserChooseBtn.value = qsTr("Change");
-                            browserChooseBtn.exec = exec
-                            console.debug("Resetted browser to default")
-                            _helper.remove(_helper.getHome() + "/.local/share/applications/open-url.desktop")
-                        }
-                    })
+                            else {
+                                browserChooseBtn.value = qsTr("Change");
+                                browserChooseBtn.exec = exec
+                                browserIcon.icon.source = "image://theme/icon-launcher-browser"
+                                console.debug("Resetted browser to default")
+                                _helper.remove(_helper.getHome() + "/.local/share/applications/open-url.desktop")
+                            }
+                        })
+                    }
                 }
             }
         }

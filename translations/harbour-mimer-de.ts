@@ -2,6 +2,13 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
+    <name>AboutPage</name>
+    <message>
+        <source>A simple app to set default applications.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AppsList</name>
     <message>
         <source>Hide search field</source>
