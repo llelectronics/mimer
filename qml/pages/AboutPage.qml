@@ -77,6 +77,14 @@ Page {
             Qt.openUrlExternally("https://github.com/llelectronics/mimer")
         }
     }
+    Text {
+        id: credits
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: homepage.bottom
+        anchors.topMargin: 20
+        text: "Credits: CODeRUS for desktopfilemodel"
+        color: "white"
+    }
 
 }
 
