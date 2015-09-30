@@ -38,6 +38,7 @@
 #include <QQuickView>
 
 #include "desktopfilesortmodel.h"
+#include "helper.hpp"
 
 
 int main(int argc, char *argv[])
@@ -60,6 +61,9 @@ int main(int argc, char *argv[])
     view->setSource(SailfishApp::pathTo("qml/harbour-mimer.qml"));
 
     qmlRegisterType<DesktopFileSortModel>("harbour.mimer.DesktopFileSortModel", 1, 0, "DesktopFileSortModel");
+
+    Helper *helper = new Helper();
+    view->engine()->rootContext()->setContextProperty("_helper", helper);
 
     view->showFullScreen();
 

@@ -72,7 +72,7 @@ void DesktopFileModel::fillDataReally()
         QDir desktopDir(path);
         foreach (const QString &desktop, desktopDir.entryList(QStringList() << "*.desktop", QDir::Files, QDir::NoSort)) {
             MDesktopEntry entry(QString("%1/%2").arg(path).arg(desktop));
-            if (entry.isValid() && entry.type() == "Application") {
+            if (entry.isValid() && entry.type() == "Application" && entry.noDisplay() != true) {
                 beginInsertRows(QModelIndex(), rowCount(), rowCount());
                 QVariantMap data;
                 data["name"] = entry.name();

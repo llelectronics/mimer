@@ -46,5 +46,6 @@ TRANSLATIONS += translations/harbour-mimer-de.ts
 HEADERS += \
     src/desktopfilesortmodel.h \
     src/desktopfilemodelplugin.h \
-    src/desktopfilemodel.h
+    src/desktopfilemodel.h \
+    src/helper.hpp
 

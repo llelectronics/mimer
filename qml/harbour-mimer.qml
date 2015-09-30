@@ -39,13 +39,3 @@ ApplicationWindow
     allowedOrientations: Orientation.All
     _defaultPageOrientations: Orientation.All
 }
-
-
-// Default Browser - open-url.desktop
-
-//[Desktop Entry]
-//Type=Application
-//Name=Browser
-//NotShowIn=X-MeeGo;
-//MimeType=text/html;x-maemo-urischeme/http;x-maemo-urischeme/https;
-//Exec=/usr/bin/harbour-webcat '%U'

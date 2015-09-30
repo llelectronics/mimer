@@ -74,13 +74,15 @@ Page {
                             if ((exec.indexOf("%u") !=-1) || (exec.indexOf("%U") != -1)) {
                                 browserChooseBtn.exec = exec;
                             }
-                            else { browserChooseBtn.exec = exec + " %U"; }
+                            else { browserChooseBtn.exec = exec + " '%U'"; }
                             console.debug("Selected: " + browserChooseBtn.value + " with exec: " + browserChooseBtn.exec)
+                            _helper.setDefaultBrowser(browserChooseBtn.exec);
                         }
                         else {
                             browserChooseBtn.value = qsTr("Change");
                             browserChooseBtn.exec = exec
                             console.debug("Resetted browser to default")
+                            _helper.remove(_helper.getHome() + "/.local/share/applications/open-url.desktop")
                         }
                     })
                 }
