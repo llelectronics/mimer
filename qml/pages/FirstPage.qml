@@ -86,14 +86,21 @@ Page {
                                 }
                                 else { browserChooseBtn.exec = exec + " '%U'"; }
                                 console.debug("Selected: " + browserChooseBtn.value + " with exec: " + browserChooseBtn.exec + " and icon image: " + icon)
-                                _helper.setDefaultBrowser(browserChooseBtn.exec);
+                                //_helper.setDefaultBrowser(browserChooseBtn.exec);
+                                var desktopfile = desktop.substring(desktop.lastIndexOf('/') + 1)
+                                _helper.setMime("text/html", desktopfile);
+                                _helper.setMime("x-maemo-urischeme/http", desktopfile);
+                                _helper.setMime("x-maemo-urischeme/https", desktopfile);
                             }
                             else {
                                 browserChooseBtn.value = qsTr("Change");
                                 browserChooseBtn.exec = exec
                                 browserIcon.icon.source = "image://theme/icon-launcher-browser"
                                 console.debug("Resetted browser to default")
-                                _helper.remove(_helper.getHome() + "/.local/share/applications/open-url.desktop")
+                                //_helper.remove(_helper.getHome() + "/.local/share/applications/open-url.desktop")
+                                _helper.setMime("text/html", "open-url.desktop");
+                                _helper.setMime("x-maemo-urischeme/http", "open-url.desktop");
+                                _helper.setMime("x-maemo-urischeme/https", "open-url.desktop");
                             }
                         })
                     }
@@ -122,7 +129,10 @@ Page {
                                 if (icon.length !== 0) imageViewerIcon.icon.source = icon;
                                 imageChooseBtn.desktop = desktop;
                                 console.debug("Selected: " + imageChooseBtn.value + " with desktopfile: " + imageChooseBtn.desktop + " and icon image: " + icon)
-                                _helper.setMime("image/jpeg",imageChooseBtn.desktop.substring(imageChooseBtn.desktop.lastIndexOf('/') + 1));
+                                var desktopfile = imageChooseBtn.desktop.substring(imageChooseBtn.desktop.lastIndexOf('/') + 1)
+                                _helper.setMime("image/jpeg",desktopfile)
+                                _helper.setMime("image/gif", desktopfile)
+                                _helper.setMime("image/png", desktopfile)
                             }
                             else {
                                 imageChooseBtn.value = qsTr("Change");
@@ -130,6 +140,8 @@ Page {
                                 imageViewerIcon.icon.source = "image://theme/icon-launcher-gallery"
                                 console.debug("Resetted image viewer to default")
                                 _helper.setMime("image/jpeg", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("image/gif", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("image/png", "jolla-gallery-openfile.desktop")
                             }
                         })
                     }
