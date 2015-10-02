@@ -81,11 +81,11 @@ Page {
                             if (name !== "Default") {
                                 browserChooseBtn.value = name;
                                 if (icon.length !== 0) browserIcon.icon.source = icon;
-                                if ((exec.indexOf("%u") !=-1) || (exec.indexOf("%U") != -1)) {
-                                    browserChooseBtn.exec = exec;
-                                }
-                                else { browserChooseBtn.exec = exec + " '%U'"; }
-                                console.debug("Selected: " + browserChooseBtn.value + " with exec: " + browserChooseBtn.exec + " and icon image: " + icon)
+//                                if ((exec.indexOf("%u") !=-1) || (exec.indexOf("%U") != -1)) {
+//                                    browserChooseBtn.exec = exec;
+//                                }
+//                                else { browserChooseBtn.exec = exec + " '%U'"; }
+                                console.debug("Selected: " + browserChooseBtn.value + " with desktopfile: " + desktop + " and icon image: " + icon)
                                 //_helper.setDefaultBrowser(browserChooseBtn.exec);
                                 var desktopfile = desktop.substring(desktop.lastIndexOf('/') + 1)
                                 _helper.setMime("text/html", desktopfile);
@@ -142,6 +142,55 @@ Page {
                                 _helper.setMime("image/jpeg", "jolla-gallery-openfile.desktop")
                                 _helper.setMime("image/gif", "jolla-gallery-openfile.desktop")
                                 _helper.setMime("image/png", "jolla-gallery-openfile.desktop")
+                            }
+                        })
+                    }
+                }
+            }
+            Row {
+                width: parent.width
+                IconButton {
+                    id: musicIcon
+                    icon.source: "image://theme/icon-launcher-mediaplayer"
+                    width: 86
+                    height: 86
+                    x: Theme.paddingLarge
+                }
+
+                ValueButton {
+                    id: musicChooseBtn
+                    label: qsTr("Music Player")
+                    value: qsTr("Change")
+                    property string desktop
+                    onClicked: {
+                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
+                        selector.selected.connect(function(name,icon,exec,desktop) {
+                            if (name !== "Default") {
+                                musicChooseBtn.value = name;
+                                if (icon.length !== 0) musicIcon.icon.source = icon;
+                                musicChooseBtn.desktop = desktop;
+                                console.debug("Selected: " + musicChooseBtn.value + " with desktopfile: " + musicChooseBtn.desktop + " and icon image: " + icon)
+                                var desktopfile = musicChooseBtn.desktop.substring(musicChooseBtn.desktop.lastIndexOf('/') + 1)
+                                _helper.setMime("audio/aac", desktopfile)
+                                _helper.setMime("audio/flac", desktopfile)
+                                _helper.setMime("audio/mp4", desktopfile)
+                                _helper.setMime("audio/mpeg", desktopfile)
+                                _helper.setMime("audio/ogg", desktopfile)
+                                _helper.setMime("audio/x-vorbis+ogg", desktopfile)
+                                _helper.setMime("audio/x-wav", desktopfile)
+                            }
+                            else {
+                                musicChooseBtn.value = qsTr("Change");
+                                musicChooseBtn.desktop = desktop
+                                musicViewerIcon.icon.source = "image://theme/icon-launcher-gallery"
+                                console.debug("Resetted music player to default")
+                                _helper.setMime("audio/aac", "jolla-mediaplayer-openfile.desktop")
+                                _helper.setMime("audio/flac", "jolla-mediaplayer-openfile.desktop")
+                                _helper.setMime("audio/mp4", "jolla-mediaplayer-openfile.desktop")
+                                _helper.setMime("audio/mpeg", "jolla-mediaplayer-openfile.desktop")
+                                _helper.setMime("audio/ogg", "jolla-mediaplayer-openfile.desktop")
+                                _helper.setMime("audio/x-vorbis+ogg", "jolla-mediaplayer-openfile.desktop")
+                                _helper.setMime("audio/x-wav", "jolla-mediaplayer-openfile.desktop")
                             }
                         })
                     }
