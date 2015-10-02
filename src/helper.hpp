@@ -9,7 +9,7 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QTextStream>
-#include <QRegExp>
+#include <QSettings>
 
 class Helper : public QObject
 {   Q_OBJECT
@@ -77,30 +77,11 @@ class Helper : public QObject
         // TODO: Allow editing mimetypes by writing directly to mimecache.info
         int setMime(const QString &mimeType, const QString &desktopFile)
         {
-            if (isFile(getHome() + "/.local/share/applications/mimecache.info")) {
-                QFile fileMime(getHome() + "/.local/share/applications/mimecache.info");
-                if(fileMime.open(QFile::ReadWrite  |QFile::Text)) {
-                    QRegExp rx(mimeType + "=*");
-                    rx.setPatternSyntax(QRegExp::Wildcard);
-                    while(!fileMime.atEnd())
-                    {
-                        fileMime.readLine().replace(rx,mimeType + "=" + desktopFile);
-                        mimes += fileMime.readLine();
-                    }
-                    //listMimes = mimes.split("\n");
-                    /*int indexAPP = listAuto.indexOf(QRegExp("*APPLICATION*",Qt::CaseSensitive,QRegExp::Wildcard)); //searching for string with *APPLICATION* wildcard
-                    listAuto[indexAPP] = *(app); //replacing string on QString* app
-                    autorun = "";
-                    autorun = listAuto.join("\n"); // from QStringList to QString
-                    fileAutorun.seek(0);*/
-                    QTextStream out(&fileMime);
-                    out << mimes; //writing to the same file
-                    fileMime.close();
-                }
-                else {
-                    qDebug() << "cannot read the file!";
-                } // end if file open
-            } // TODO: else create file with mimeType=desktopFile line
+            QString mimePath(getHome() + "/.local/share/applications/mimecache.info");
+            QSettings mimeFile(mimePath,QSettings::IniFormat);
+            mimeFile.beginGroup("MIME Cache");
+            mimeFile.setValue(mimeType,desktopFile);
+            mimeFile.endGroup();
         }
 };
 

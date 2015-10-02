@@ -70,7 +70,7 @@ void DesktopFileModel::fillDataReally()
 
     foreach (const QString &path, desktopPath) {
         QDir desktopDir(path);
-        foreach (const QString &desktop, desktopDir.entryList(QStringList() << "*.desktop", QDir::Files, QDir::NoSort)) {
+        foreach (const QString &desktop, desktopDir.entryList(QStringList() << "[^apkd_*]*.desktop", QDir::Files, QDir::NoSort)) {
             MDesktopEntry entry(QString("%1/%2").arg(path).arg(desktop));
             if (entry.isValid() && entry.type() == "Application" && entry.noDisplay() != true) {
                 beginInsertRows(QModelIndex(), rowCount(), rowCount());
