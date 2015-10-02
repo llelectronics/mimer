@@ -77,7 +77,7 @@ Page {
                     property string exec
                     onClicked: {
                         var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
-                        selector.selected.connect(function(name,icon,exec) {
+                        selector.selected.connect(function(name,icon,exec,desktop) {
                             if (name !== "Default") {
                                 browserChooseBtn.value = name;
                                 if (icon.length !== 0) browserIcon.icon.source = icon;
@@ -94,6 +94,42 @@ Page {
                                 browserIcon.icon.source = "image://theme/icon-launcher-browser"
                                 console.debug("Resetted browser to default")
                                 _helper.remove(_helper.getHome() + "/.local/share/applications/open-url.desktop")
+                            }
+                        })
+                    }
+                }
+            }
+            Row {
+                width: parent.width
+                IconButton {
+                    id: imageViewerIcon
+                    icon.source: "image://theme/icon-launcher-gallery"
+                    width: 86
+                    height: 86
+                    x: Theme.paddingLarge
+                }
+
+                ValueButton {
+                    id: imageChooseBtn
+                    label: qsTr("Image Viewer")
+                    value: qsTr("Change")
+                    property string desktop
+                    onClicked: {
+                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
+                        selector.selected.connect(function(name,icon,exec,desktop) {
+                            if (name !== "Default") {
+                                imageChooseBtn.value = name;
+                                if (icon.length !== 0) imageViewerIcon.icon.source = icon;
+                                imageChooseBtn.desktop = desktop;
+                                console.debug("Selected: " + imageChooseBtn.value + " with desktopfile: " + imageChooseBtn.desktop + " and icon image: " + icon)
+                                _helper.setMime("image/jpeg",imageChooseBtn.desktop.substring(imageChooseBtn.desktop.lastIndexOf('/') + 1));
+                            }
+                            else {
+                                imageChooseBtn.value = qsTr("Change");
+                                imageChooseBtn.desktop = desktop
+                                imageViewerIcon.icon.source = "image://theme/icon-launcher-gallery"
+                                console.debug("Resetted image viewer to default")
+                                _helper.setMime("image/jpeg", "jolla-gallery-openfile.desktop")
                             }
                         })
                     }

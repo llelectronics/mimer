@@ -52,5 +52,9 @@
         <source>Change</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Image Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

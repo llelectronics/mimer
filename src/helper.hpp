@@ -10,6 +10,7 @@
 #include <QUrl>
 #include <QTextStream>
 #include <QSettings>
+#include <QProcess>
 
 class Helper : public QObject
 {   Q_OBJECT
@@ -64,6 +65,7 @@ class Helper : public QObject
 
             /* Close the file */
             outputFile.close();
+            return 0;
         }
         // Default Browser - open-url.desktop
 
@@ -77,11 +79,27 @@ class Helper : public QObject
         // TODO: Allow editing mimetypes by writing directly to mimecache.info
         int setMime(const QString &mimeType, const QString &desktopFile)
         {
-            QString mimePath(getHome() + "/.local/share/applications/mimecache.info");
-            QSettings mimeFile(mimePath,QSettings::IniFormat);
-            mimeFile.beginGroup("MIME Cache");
-            mimeFile.setValue(mimeType,desktopFile);
-            mimeFile.endGroup();
+//            QString mimePath(getHome() + "/.local/share/applications/mimecache.info");
+//            QSettings mimeFile(mimePath,QSettings::NativeFormat);
+//            mimeFile.setIniCodec("UTF-8");
+//            mimeFile.beginGroup("MIME Cache");
+//            mimeFile.setValue(mimeType,desktopFile);
+//            mimeFile.endGroup();
+            if (!isFile(getHome() + "/.local/share/applications/defaults.list"))  {
+                QProcess linking;
+                linking.startDetached("ln -sf " + getHome() + "/.local/share/applications/mimeapps.list " + getHome() + "/.local/share/applications/defaults.list");
+            }
+            QProcess mimeProc;
+            mimeProc.startDetached("xdg-mime default " + desktopFile + " " + mimeType);
+            return 0;
+        }
+        int removeMime(const QString &mimeType)
+        {
+            QString mimePath(getHome() + "/.local/share/applications/mimeapps.list");
+            QSettings mimeFile(mimePath,QSettings::NativeFormat);
+            mimeFile.setIniCodec("UTF-8");
+            mimeFile.remove(mimeType);
+            return 0;
         }
 };
 
