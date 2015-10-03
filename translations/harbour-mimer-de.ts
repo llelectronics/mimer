@@ -5,26 +5,26 @@
     <name>AboutPage</name>
     <message>
         <source>A simple app to set default applications.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine einfache App zum setzen der Standardapps</translation>
     </message>
 </context>
 <context>
     <name>AppsList</name>
     <message>
         <source>Hide search field</source>
-        <translation type="unfinished"></translation>
+        <translation>Verstecke Suchmaske</translation>
     </message>
     <message>
         <source>Show search field</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Suchmaske</translation>
     </message>
     <message>
         <source>Select App</source>
-        <translation type="unfinished"></translation>
+        <translation>App auswählen</translation>
     </message>
     <message>
         <source>Reset / Set default</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurücksetzen / Standard setzen</translation>
     </message>
 </context>
 <context>
@@ -38,43 +38,43 @@
     <name>FirstPage</name>
     <message>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>Über</translation>
     </message>
     <message>
         <source>Set default apps</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardapps setzen</translation>
     </message>
     <message>
         <source>Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Browser</translation>
     </message>
     <message>
         <source>Change</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändern</translation>
     </message>
     <message>
         <source>Image Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildbetrachter</translation>
     </message>
     <message>
         <source>Music Player</source>
-        <translation type="unfinished"></translation>
+        <translation>Musikplayer</translation>
     </message>
     <message>
         <source>Video Player</source>
-        <translation type="unfinished"></translation>
+        <translation>Videoplayer</translation>
     </message>
     <message>
         <source>Set everything to defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles zurücksetzen</translation>
     </message>
     <message>
         <source>Manual edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Manuell bearbeiten</translation>
     </message>
     <message>
         <source>Opening...</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne...</translation>
     </message>
 </context>
 </TS>
