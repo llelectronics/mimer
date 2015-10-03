@@ -64,5 +64,17 @@
         <source>Video Player</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Set everything to defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

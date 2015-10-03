@@ -34,6 +34,10 @@ class Helper : public QObject
         {
             return QFileInfo(url).isFile();
         }
+        bool isLink(const QString &url)
+        {
+            return QFileInfo(url).isSymLink();
+        }
         /* Just for testing purposes. I just don't want to get killed by CODeRUS so not using this :P */
 //        int setDefaultBrowser(const QString &execLine)
 //        {
@@ -87,6 +91,12 @@ class Helper : public QObject
             QProcess mimeProc;
             mimeProc.start("xdg-mime default " + desktopFile + " " + mimeType);
             mimeProc.waitForFinished();
+            return 0;
+        }
+        int openFileWith(const QString &application, const QString &url)
+        {
+            QProcess openApp;
+            openApp.startDetached(application + " " + url);
             return 0;
         }
 };

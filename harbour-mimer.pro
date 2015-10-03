@@ -32,7 +32,8 @@ OTHER_FILES += qml/harbour-mimer.qml \
     qml/pages/AboutPage.qml \
     qml/pages/AppsList.qml \
     qml/pages/BrowserList.qml \
-    qml/pages/CreditsModel.qml
+    qml/pages/CreditsModel.qml \
+    qml/pages/InfoBanner.qml
 
 # to disable building translations every time, comment out the
 # following CONFIG line

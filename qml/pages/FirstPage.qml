@@ -35,6 +35,11 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    property string mimeappslist:  _helper.getHome() + "/.local/share/applications/mimeapps.list"
+    property string defaultslist:  _helper.getHome() + "/.local/share/applications/defaults.list"
+
+    RemorsePopup { id: remorse }
+
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
         anchors.fill: parent
@@ -44,6 +49,29 @@ Page {
             MenuItem {
                 text: qsTr("About")
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+            }
+            MenuItem {
+                id: resetAllMenuItem
+                text: qsTr("Set everything to defaults")
+                visible: _helper.isFile(mimeappslist)
+                onClicked: {
+                    remorse.execute("Resetting everything", function() {
+                        if (_helper.isFile(mimeappslist)) _helper.remove(mimeappslist)
+                        if (_helper.isFile(defaultslist) || _helper.isLink(defaultslist)) _helper.remove(defaultslist)
+                    } )
+                }
+            }
+            MenuItem {
+                id: manualEditMenuItem
+                text: qsTr("Manual edit")
+                visible: {
+                    if (_helper.isFile(mimeappslist) && _helper.isFile("/usr/bin/harbour-tinyedit")) return true
+                    else return false
+                }
+                onClicked: {
+                    mainWindow.infoBanner.showText(qsTr("Opening..."));
+                    _helper.openFileWith("/usr/bin/harbour-tinyedit",mimeappslist);
+                }
             }
         }
 

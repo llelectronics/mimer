@@ -681,12 +681,19 @@ import "pages"
 
 ApplicationWindow
 {
+    id: mainWindow
     initialPage: Component { FirstPage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
     allowedOrientations: Orientation.All
     _defaultPageOrientations: Orientation.All
+    property alias infoBanner: infoBanner
 
     property string version: "0.1.0"
     property string appname: "Mimer"
     property string appicon: "mimer.png"
+
+    InfoBanner {
+        id: infoBanner
+        z:1
+    }
 }
