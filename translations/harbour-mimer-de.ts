@@ -30,8 +30,8 @@
 <context>
     <name>CoverPage</name>
     <message>
-        <source>My Cover</source>
-        <translation>Mein Cover</translation>
+        <source>Mimer</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -54,6 +54,14 @@
     </message>
     <message>
         <source>Image Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Music Player</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Video Player</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

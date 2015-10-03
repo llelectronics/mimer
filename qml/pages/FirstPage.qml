@@ -182,7 +182,7 @@ Page {
                             else {
                                 musicChooseBtn.value = qsTr("Change");
                                 musicChooseBtn.desktop = desktop
-                                musicViewerIcon.icon.source = "image://theme/icon-launcher-gallery"
+                                musicIcon.icon.source = "image://theme/icon-launcher-mediaplayer"
                                 console.debug("Resetted music player to default")
                                 _helper.setMime("audio/aac", "jolla-mediaplayer-openfile.desktop")
                                 _helper.setMime("audio/flac", "jolla-mediaplayer-openfile.desktop")
@@ -191,6 +191,81 @@ Page {
                                 _helper.setMime("audio/ogg", "jolla-mediaplayer-openfile.desktop")
                                 _helper.setMime("audio/x-vorbis+ogg", "jolla-mediaplayer-openfile.desktop")
                                 _helper.setMime("audio/x-wav", "jolla-mediaplayer-openfile.desktop")
+                            }
+                        })
+                    }
+                }
+            }
+            Row {
+                width: parent.width
+                IconButton {
+                    id: videoIcon
+                    icon.source: "image://theme/icon-launcher-gallery"
+                    width: 86
+                    height: 86
+                    x: Theme.paddingLarge
+                }
+
+                ValueButton {
+                    id: videoChooseBtn
+                    label: qsTr("Video Player")
+                    value: qsTr("Change")
+                    property string desktop
+                    onClicked: {
+                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
+                        selector.selected.connect(function(name,icon,exec,desktop) {
+                            if (name !== "Default") {
+                                videoChooseBtn.value = name;
+                                if (icon.length !== 0) videoIcon.icon.source = icon;
+                                videoChooseBtn.desktop = desktop;
+                                console.debug("Selected: " + videoChooseBtn.value + " with desktopfile: " + videoChooseBtn.desktop + " and icon image: " + icon)
+                                var desktopfile = videoChooseBtn.desktop.substring(videoChooseBtn.desktop.lastIndexOf('/') + 1)
+                                _helper.setMime("video/mp4", desktopfile)
+                                _helper.setMime("video/dv", desktopfile)
+                                _helper.setMime("video/mp2t", desktopfile)
+                                _helper.setMime("video/mp4v-es", desktopfile)
+                                _helper.setMime("video/mpeg", desktopfile)
+                                _helper.setMime("video/msvideo", desktopfile)
+                                _helper.setMime("video/quicktime", desktopfile)
+                                _helper.setMime("video/vnd.rn-realvideo", desktopfile)
+                                _helper.setMime("video/webm", desktopfile)
+                                _helper.setMime("video/x-avi", desktopfile)
+                                _helper.setMime("video/x-flv", desktopfile)
+                                _helper.setMime("video/x-matroska", desktopfile)
+                                _helper.setMime("video/x-mpeg", desktopfile)
+                                _helper.setMime("video/x-ms-asf", desktopfile)
+                                _helper.setMime("video/x-ms-wmv", desktopfile)
+                                _helper.setMime("video/x-msvideo", desktopfile)
+                                _helper.setMime("video/x-ogm+ogg", desktopfile)
+                                _helper.setMime("x-maemo-urischeme/mms", desktopfile)
+                                _helper.setMime("x-maemo-urischeme/rtmp", desktopfile)
+                                _helper.setMime("x-maemo-urischeme/rtsp", desktopfile)
+                            }
+                            else {
+                                videoChooseBtn.value = qsTr("Change");
+                                videoChooseBtn.desktop = desktop
+                                videoIcon.icon.source = "image://theme/icon-launcher-gallery"
+                                console.debug("Resetted video player to default")
+                                _helper.setMime("video/mp4", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/dv", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/mp2t", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/mp4v-es", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/mpeg", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/msvideo", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/quicktime", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/vnd.rn-realvideo", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/webm", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-avi", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-flv", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-matroska", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-mpeg", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-ms-asf", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-ms-wmv", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-msvideo", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("video/x-ogm+ogg", "jolla-gallery-openfile.desktop")
+                                _helper.setMime("x-maemo-urischeme/mms", "jolla-gallery-playvideostream.desktop")
+                                _helper.setMime("x-maemo-urischeme/rtmp", "jolla-gallery-playvideostream.desktop")
+                                _helper.setMime("x-maemo-urischeme/rtsp", "jolla-gallery-playvideostream.desktop")
                             }
                         })
                     }
