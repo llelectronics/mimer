@@ -76,5 +76,9 @@
         <source>Opening...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Text Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

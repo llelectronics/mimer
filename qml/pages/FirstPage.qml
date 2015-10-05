@@ -65,12 +65,12 @@ Page {
                 id: manualEditMenuItem
                 text: qsTr("Manual edit")
                 visible: {
-                    if (_helper.isFile(mimeappslist) && _helper.isFile("/usr/bin/harbour-tinyedit")) return true
+                    if (_helper.isFile(mimeappslist)) return true
                     else return false
                 }
                 onClicked: {
                     mainWindow.infoBanner.showText(qsTr("Opening..."));
-                    _helper.openFileWith("/usr/bin/harbour-tinyedit",mimeappslist);
+                    _helper.openFileWith("xdg-open",mimeappslist);
                 }
             }
         }
@@ -294,6 +294,43 @@ Page {
                                 _helper.setMime("x-maemo-urischeme/mms", "jolla-gallery-playvideostream.desktop")
                                 _helper.setMime("x-maemo-urischeme/rtmp", "jolla-gallery-playvideostream.desktop")
                                 _helper.setMime("x-maemo-urischeme/rtsp", "jolla-gallery-playvideostream.desktop")
+                            }
+                        })
+                    }
+                }
+            }
+            Row {
+                width: parent.width
+                IconButton {
+                    id: textIcon
+                    icon.source: "image://theme/icon-launcher-notes"
+                    width: 86
+                    height: 86
+                    x: Theme.paddingLarge
+                }
+
+                ValueButton {
+                    id: textChooseBtn
+                    label: qsTr("Text Editor")
+                    value: qsTr("Change")
+                    property string desktop
+                    onClicked: {
+                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
+                        selector.selected.connect(function(name,icon,exec,desktop) {
+                            if (name !== "Default") {
+                                textChooseBtn.value = name;
+                                if (icon.length !== 0) textIcon.icon.source = icon;
+                                textChooseBtn.desktop = desktop;
+                                console.debug("Selected: " + textChooseBtn.value + " with desktopfile: " + textChooseBtn.desktop + " and icon image: " + icon)
+                                var desktopfile = textChooseBtn.desktop.substring(textChooseBtn.desktop.lastIndexOf('/') + 1)
+                                _helper.setMime("text/plain", desktopfile)
+                            }
+                            else {
+                                textChooseBtn.value = qsTr("Change");
+                                textChooseBtn.desktop = desktop
+                                textIcon.icon.source = "image://theme/icon-launcher-notes"
+                                console.debug("Resetted text editor to default")
+                                _helper.setMime("text/plain", "jolla-notes-import.desktop")
                             }
                         })
                     }
