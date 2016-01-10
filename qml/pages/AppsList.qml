@@ -9,6 +9,7 @@ Page {
     signal selected(string name, string icon, string exec, string desktop)
     property bool searchEnabled: false
     property variant selectedValues: []
+    property bool showHidden: false
 
     SilicaFlickable {
         id: view
@@ -30,6 +31,15 @@ Page {
                 enabled: shortcutsRepeater.count > 0
                 onClicked: {
                     searchEnabled = !searchEnabled
+                }
+            }
+            MenuItem {
+                text: showHidden
+                      ? qsTr("Hide hidden Applications")
+                      : qsTr("Show hidden Applications")
+                enabled: shortcutsRepeater.count > 0
+                onClicked: {
+                    showHidden = !showHidden
                 }
             }
         }
@@ -108,16 +118,17 @@ Page {
         BackgroundItem {
             id: item
             width: parent.width
-            contentHeight: 110
-            height: 110
+            contentHeight: Theme.itemSizeLarge
+            height: Theme.itemSizeLarge
             property bool isSelected: selectedValues.indexOf(model.exec) >= 0
             highlighted: down || isSelected
+            visible: showHidden ? true : !model.nodisplay
 
             Image {
                 id: iconImage
                 source: model.icon
-                width: 86
-                height: 86
+                width: Theme.iconSizeLauncher
+                height: Theme.iconSizeLauncher
                 smooth: true
                 anchors {
                     left: parent.left

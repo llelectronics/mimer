@@ -19,8 +19,8 @@ Page {
 
             Image{
                 source: appicon
-                height: 128
-                width: 128
+                height: Theme.iconSizeLarge
+                width: Theme.iconSizeLarge
                 fillMode: Image.PreserveAspectFit
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -49,7 +49,7 @@ Page {
             }
 
             Label {
-                width: 360
+                width: parent.width
                 font.pixelSize: Theme.fontSizeMedium
                 text: "Created by llelectronics"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -93,7 +93,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignHCenter
-                height: 200
+                height: Theme.itemSizeLarge
                 wrapMode: Text.WordWrap
             }
         }

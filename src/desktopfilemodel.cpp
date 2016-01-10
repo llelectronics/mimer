@@ -15,6 +15,7 @@ DesktopFileModel::DesktopFileModel(QObject *parent) :
     _roles[PathRole] = "path";
     _roles[PackageRole] = "package";
     _roles[ExecRole] = "exec";
+    _roles[DisplayRole] = "nodisplay";
 
     fillData();
 }
@@ -72,7 +73,7 @@ void DesktopFileModel::fillDataReally()
         QDir desktopDir(path);
         foreach (const QString &desktop, desktopDir.entryList(QStringList() << "[^apkd_*]*.desktop", QDir::Files, QDir::NoSort)) {
             MDesktopEntry entry(QString("%1/%2").arg(path).arg(desktop));
-            if (entry.isValid() && entry.type() == "Application" && entry.noDisplay() != true) {
+            if (entry.isValid() && entry.type() == "Application") {
                 beginInsertRows(QModelIndex(), rowCount(), rowCount());
                 QVariantMap data;
                 data["name"] = entry.name();
@@ -80,6 +81,7 @@ void DesktopFileModel::fillDataReally()
                 data["path"] = entry.fileName();
                 data["package"] = entry.exec().split(" ").last().split("/").first();
                 data["exec"] = entry.exec();
+                data["nodisplay"] = entry.noDisplay();
 //                qDebug() << "added:" << entry.fileName();
                 _modelData.append(data);
                 endInsertRows();

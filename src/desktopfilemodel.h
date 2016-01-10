@@ -12,7 +12,8 @@ public:
         IconRole,
         PathRole,
         PackageRole,
-        ExecRole
+        ExecRole,
+        DisplayRole
     };
 
     explicit DesktopFileModel(QObject *parent = 0);

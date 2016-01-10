@@ -26,6 +26,14 @@
         <source>Reset / Set default</source>
         <translation>Zurücksetzen / Standard setzen</translation>
     </message>
+    <message>
+        <source>Hide hidden Applications</source>
+        <translation>Verstecke versteckte Anwendungen</translation>
+    </message>
+    <message>
+        <source>Show hidden Applications</source>
+        <translation>Zeige versteckte Anwendungen</translation>
+    </message>
 </context>
 <context>
     <name>CoverPage</name>

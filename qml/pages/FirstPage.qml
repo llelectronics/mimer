@@ -93,8 +93,8 @@ Page {
                 IconButton {
                     id: browserIcon
                     icon.source: "image://theme/icon-launcher-browser"
-                    width: 86
-                    height: 86
+                    width: Theme.iconSizeLauncher
+                    height: Theme.iconSizeLauncher
                     x: Theme.paddingLarge
                 }
 
@@ -139,8 +139,8 @@ Page {
                 IconButton {
                     id: imageViewerIcon
                     icon.source: "image://theme/icon-launcher-gallery"
-                    width: 86
-                    height: 86
+                    width: Theme.iconSizeLauncher
+                    height: Theme.iconSizeLauncher
                     x: Theme.paddingLarge
                 }
 
@@ -180,8 +180,8 @@ Page {
                 IconButton {
                     id: musicIcon
                     icon.source: "image://theme/icon-launcher-mediaplayer"
-                    width: 86
-                    height: 86
+                    width: Theme.iconSizeLauncher
+                    height: Theme.iconSizeLauncher
                     x: Theme.paddingLarge
                 }
 
@@ -229,8 +229,8 @@ Page {
                 IconButton {
                     id: videoIcon
                     icon.source: "image://theme/icon-launcher-gallery"
-                    width: 86
-                    height: 86
+                    width: Theme.iconSizeLauncher
+                    height: Theme.iconSizeLauncher
                     x: Theme.paddingLarge
                 }
 
@@ -304,8 +304,8 @@ Page {
                 IconButton {
                     id: textIcon
                     icon.source: "image://theme/icon-launcher-notes"
-                    width: 86
-                    height: 86
+                    width: Theme.iconSizeLauncher
+                    height: Theme.iconSizeLauncher
                     x: Theme.paddingLarge
                 }
 

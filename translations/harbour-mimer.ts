@@ -26,6 +26,14 @@
         <source>Reset / Set default</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hide hidden Applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show hidden Applications</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CoverPage</name>

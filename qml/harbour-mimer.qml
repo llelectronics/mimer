@@ -688,7 +688,7 @@ ApplicationWindow
     _defaultPageOrientations: Orientation.All
     property alias infoBanner: infoBanner
 
-    property string version: "0.1.0"
+    property string version: "0.1.3"
     property string appname: "Mimer"
     property string appicon: "mimer.png"
 
