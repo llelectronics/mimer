@@ -38,6 +38,15 @@ class Helper : public QObject
         {
             return QFileInfo(url).isSymLink();
         }
+        bool resetBrowser()
+        {
+            if (isFile("/usr/bin/harbour-webcat")) {
+                QProcess mimeProc;
+                mimeProc.start("harbour-webcat --reset-default");
+                mimeProc.waitForFinished();
+            }
+            return true;
+        }
         /* Just for testing purposes. I just don't want to get killed by CODeRUS so not using this :P */
 //        int setDefaultBrowser(const QString &execLine)
 //        {
@@ -82,15 +91,31 @@ class Helper : public QObject
 
         int setMime(const QString &mimeType, const QString &desktopFile)
         {
-            // Workaround for SailfishOS which only works if defaults.list is available. Xdg-mime only produces mimeapps.list however
-            if (!isFile(getHome() + "/.local/share/applications/defaults.list"))  {
-                QProcess linking;
-                linking.start("ln -sf " + getHome() + "/.local/share/applications/mimeapps.list " + getHome() + "/.local/share/applications/defaults.list");
-                linking.waitForFinished();
-            }
             QProcess mimeProc;
             mimeProc.start("xdg-mime default " + desktopFile + " " + mimeType);
             mimeProc.waitForFinished();
+            // Workaround for SailfishOS which only works if defaults.list is available. Xdg-mime only produces mimeapps.list however
+            if (!isFile(getHome() + "/.local/share/applications/defaults.list"))  {
+                if (isFile(getHome() + "/.local/share/applications/mimeapps.list")) {
+                    QProcess linking;
+                    linking.start("ln -sf " + getHome() + "/.config/mimeapps.list " + getHome() + "/.local/share/applications/defaults.list");
+                    linking.waitForFinished();
+                }
+                // Newer SailfishOS Versions put mimeapps.list in config
+                if (isFile(getHome() + "/.config/mimeapps.list")) {
+                    QProcess linking;
+                    linking.start("ln -sf " + getHome() + "/.config/mimeapps.list " + getHome() + "/.local/share/applications/defaults.list");
+                    linking.waitForFinished();
+                }
+            }
+            if (desktopFile.contains("harbour-webcat") && mimeType == "text/html") {
+                QProcess mimeProc;
+                mimeProc.start("harbour-webcat --set-default");
+                mimeProc.waitForFinished();
+            }
+            else if (mimeType == "text/html") {
+                resetBrowser();
+            }
             return 0;
         }
         int openFileWith(const QString &application, const QString &url)
