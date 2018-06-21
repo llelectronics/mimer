@@ -35,7 +35,10 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
-    property string mimeappslist:  _helper.getHome() + "/.local/share/applications/mimeapps.list"
+    property string mimeappslist: {
+        if (_helper.isFile(_helper.getHome() + "/.local/share/applications/mimeapps.list")) return _helper.getHome() + "/.local/share/applications/mimeapps.list"
+        else if (_helper.isFile(_helper.getHome() + "/.config/mimeapps.list")) return _helper.getHome() + "/.config/mimeapps.list"
+    }
     property string defaultslist:  _helper.getHome() + "/.local/share/applications/defaults.list"
 
     RemorsePopup { id: remorse }
