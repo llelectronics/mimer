@@ -677,6 +677,7 @@ Public License instead of this License.  But first, please read
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Nemo.Configuration 1.0
 import "pages"
 
 ApplicationWindow
@@ -684,16 +685,37 @@ ApplicationWindow
     id: mainWindow
     initialPage: Component { FirstPage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
-    allowedOrientations: Orientation.All
-    _defaultPageOrientations: Orientation.All
-    property alias infoBanner: infoBanner
+    allowedOrientations: defaultAllowedOrientations
+    _defaultPageOrientations: allowedOrientations
 
-    property string version: "0.1.5"
+    property string version: "0.1.6"
     property string appname: "Mimer"
-    property string appicon: "mimer.png"
+    property string appicon: "image://theme/harbour-mimer"
 
-    InfoBanner {
-        id: infoBanner
-        z:1
+    ConfigurationValue {
+        id: config
+        key: "/apps/harbour-mimer/apps"
+        defaultValue: [{  }]
+
+        function getApp(app) {
+            var list = config.value
+            for (var key in list) {
+                if (list[key].name === app) {
+                    return list[key]
+                }
+            }
+            return null
+        }
+
+        function removeApp(app) {
+            var list = config.value
+            for (var key in list) {
+                if (list[key].name === app) {
+                    list.splice(key, 1)
+                    config.value = list
+                    return
+                }
+            }
+        }
     }
 }

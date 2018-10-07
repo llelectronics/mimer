@@ -28,14 +28,11 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef QT_QML_DEBUG
-#include <QtQuick>
-#endif
-
 #include <sailfishapp.h>
 #include <QGuiApplication>
 #include <QtQml>
 #include <QQuickView>
+#include <QtQuick>
 
 #include "desktopfilesortmodel.h"
 #include "helper.hpp"
@@ -54,16 +51,16 @@ int main(int argc, char *argv[])
     QGuiApplication *app = SailfishApp::application(argc, argv);
 
     app->setApplicationName("harbour-mimer");
-    app->setApplicationVersion("0.1.0");
+    app->setApplicationVersion("0.1.6");
 
     QQuickView *view = SailfishApp::createView();
 
-    view->setSource(SailfishApp::pathTo("qml/harbour-mimer.qml"));
+    Helper *helper = new Helper();
+    view->engine()->rootContext()->setContextProperty("_helper", helper);
 
     qmlRegisterType<DesktopFileSortModel>("harbour.mimer.DesktopFileSortModel", 1, 0, "DesktopFileSortModel");
 
-    Helper *helper = new Helper();
-    view->engine()->rootContext()->setContextProperty("_helper", helper);
+    view->setSource(SailfishApp::pathTo("qml/harbour-mimer.qml"));
 
     view->showFullScreen();
 

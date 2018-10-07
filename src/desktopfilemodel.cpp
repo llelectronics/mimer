@@ -63,7 +63,6 @@ void DesktopFileModel::fillDataReally()
 {
     beginResetModel();
     _modelData.clear();
-    endResetModel();
 
     QStringList desktopPath;
     desktopPath << "/usr/share/applications";
@@ -74,7 +73,6 @@ void DesktopFileModel::fillDataReally()
         foreach (const QString &desktop, desktopDir.entryList(QStringList() << "*.desktop", QDir::Files, QDir::NoSort)) {
             MDesktopEntry entry(QString("%1/%2").arg(path).arg(desktop));
             if (entry.isValid() && entry.type() == "Application") {
-                beginInsertRows(QModelIndex(), rowCount(), rowCount());
                 QVariantMap data;
                 data["name"] = entry.name();
                 data["icon"] = getIconPath(entry.icon());
@@ -84,11 +82,11 @@ void DesktopFileModel::fillDataReally()
                 data["nodisplay"] = entry.noDisplay();
 //                qDebug() << "added:" << entry.fileName();
                 _modelData.append(data);
-                endInsertRows();
             }
             QCoreApplication::processEvents();
         }
     }
+    endResetModel();
     Q_EMIT dataFillEnd();
 }
 

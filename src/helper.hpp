@@ -10,6 +10,7 @@
 #include <QUrl>
 #include <QTextStream>
 #include <QProcess>
+#include <contentaction5/contentaction.h>
 
 class Helper : public QObject
 {   Q_OBJECT
@@ -91,33 +92,25 @@ class Helper : public QObject
 
         int setMime(const QString &mimeType, const QString &desktopFile)
         {
-            QProcess mimeProc;
-            mimeProc.start("xdg-mime default " + desktopFile + " " + mimeType);
-            mimeProc.waitForFinished();
-            // Workaround for SailfishOS which only works if defaults.list is available. Xdg-mime only produces mimeapps.list however
-            if (!isFile(getHome() + "/.local/share/applications/defaults.list"))  {
-                if (isFile(getHome() + "/.local/share/applications/mimeapps.list")) {
-                    QProcess linking;
-                    linking.start("ln -sf " + getHome() + "/.config/mimeapps.list " + getHome() + "/.local/share/applications/defaults.list");
-                    linking.waitForFinished();
-                }
-                // Newer SailfishOS Versions put mimeapps.list in config
-                if (isFile(getHome() + "/.config/mimeapps.list")) {
-                    QProcess linking;
-                    linking.start("ln -sf " + getHome() + "/.config/mimeapps.list " + getHome() + "/.local/share/applications/defaults.list");
-                    linking.waitForFinished();
+            QString desktopAction = desktopFile.section(".desktop", 0, 0);
+            QList<ContentAction::Action> actionList = ContentAction::actionsForMime(mimeType);
+            foreach (ContentAction::Action action, actionList) {
+                if (action.name().startsWith(desktopAction) && // jolla apps use desktopAction-openfile/-openurl/-playvideostream mime handlers
+                    !action.name().startsWith("open-url-webcat")) { // exclude strange webcat mime handler
+                    desktopAction = action.name();
+                    break;
                 }
             }
-            if (desktopFile.contains("harbour-webcat") && mimeType == "text/html") {
-                QProcess mimeProc;
-                mimeProc.start("harbour-webcat --set-default");
-                mimeProc.waitForFinished();
-            }
-            else if (mimeType == "text/html") {
-                resetBrowser();
-            }
+            ContentAction::setMimeDefault(mimeType, desktopAction);
+
             return 0;
         }
+
+        QString actionForMime(const QString &mimeType)
+        {
+            return ContentAction::defaultActionForMime(mimeType).name();
+        }
+
         int openFileWith(const QString &application, const QString &url)
         {
             QProcess openApp;

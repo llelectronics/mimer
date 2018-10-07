@@ -6,15 +6,17 @@ import harbour.mimer.DesktopFileSortModel 1.0
 Page {
     id: page
 
-    signal selected(string name, string icon, string exec, string desktop)
+    signal selected(string name, string icon, string exec, string desktopFilePath)
     property bool searchEnabled: false
     property variant selectedValues: []
     property bool showHidden: false
 
-    SilicaFlickable {
+    SilicaListView {
         id: view
         anchors.fill: page
         contentHeight: content.height
+
+        property var searchField
 
         PullDownMenu {
             MenuItem {
@@ -28,7 +30,7 @@ Page {
                 text: searchEnabled
                       ? qsTr("Hide search field")
                       : qsTr("Show search field")
-                enabled: shortcutsRepeater.count > 0
+                //enabled: shortcutsRepeater.count > 0
                 onClicked: {
                     searchEnabled = !searchEnabled
                 }
@@ -37,14 +39,14 @@ Page {
                 text: showHidden
                       ? qsTr("Hide hidden Applications")
                       : qsTr("Show hidden Applications")
-                enabled: shortcutsRepeater.count > 0
+                //enabled: shortcutsRepeater.count > 0
                 onClicked: {
                     showHidden = !showHidden
                 }
             }
         }
 
-        Column {
+        header: Column {
             id: content
             width: parent.width
 
@@ -84,16 +86,15 @@ Page {
                         duration: 150
                     }
                 }
-            }
-
-            Repeater {
-                id: shortcutsRepeater
-                delegate: shortcutDelegate
-                model: desktopModel
-                width: parent.width
-                enabled: false
+                Component.onCompleted: {
+                    view.searchField = searchField
+                }
             }
         }
+
+        model: desktopModel
+        enabled: false
+        delegate: shortcutDelegate
 
         VerticalScrollDecorator {}
     }
@@ -101,15 +102,15 @@ Page {
     BusyIndicator {
         anchors.centerIn: view
         size: BusyIndicatorSize.Large
-        visible: !shortcutsRepeater.enabled
+        visible: !view.enabled
         running: visible
     }
 
     DesktopFileSortModel {
         id: desktopModel
-        filter: searchField.text
+        filter: view.searchField.text
         onDataFillEnd: {
-            shortcutsRepeater.enabled = true
+            view.enabled = true
         }
     }
 
@@ -118,8 +119,8 @@ Page {
         BackgroundItem {
             id: item
             width: parent.width
-            contentHeight: Theme.itemSizeLarge
-            height: Theme.itemSizeLarge
+            contentHeight: visible ? Theme.itemSizeLarge : 0
+            height: visible ? Theme.itemSizeLarge : 0
             property bool isSelected: selectedValues.indexOf(model.exec) >= 0
             highlighted: down || isSelected
             visible: showHidden ? true : !model.nodisplay
@@ -130,6 +131,7 @@ Page {
                 width: Theme.iconSizeLauncher
                 height: Theme.iconSizeLauncher
                 smooth: true
+                asynchronous: true
                 anchors {
                     left: parent.left
                     leftMargin: Theme.paddingLarge
@@ -138,7 +140,7 @@ Page {
             }
 
             Label {
-                text: Theme.highlightText(model.name, searchField.text, Theme.highlightColor)
+                text: Theme.highlightText(model.name, view.searchField.text, Theme.highlightColor)
                 anchors {
                     left: iconImage.right
                     leftMargin: Theme.paddingMedium
@@ -148,7 +150,7 @@ Page {
             }
 
             onClicked: {
-                if (shortcutsRepeater.enabled) {
+                if (view.enabled) {
                     selected(model.name,model.icon,model.exec,model.path)
                     pageStack.pop();
                 }
