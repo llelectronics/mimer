@@ -4,7 +4,7 @@ Page {
 
     CreditsModel {id: credits}
 
-    Flickable {
+    SilicaFlickable {
         id: flick
         width:parent.width
         height: parent.height - Theme.paddingLarge * 3

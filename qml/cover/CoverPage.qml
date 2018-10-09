@@ -32,10 +32,21 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 CoverBackground {
+
+    Image {
+        source: appicon
+        asynchronous: true
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: parent.top
+            topMargin: 1.5 * Theme.paddingLarge
+        }
+    }
     Label {
         id: label
         anchors.centerIn: parent
         text: qsTr("Mimer")
+        font.pixelSize: Theme.fontSizeLarge
     }
 
 //    CoverActionList {

@@ -30,24 +30,35 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-
+import "../components"
 
 Page {
     id: page
 
-    property string mimeappslist: {
-        if (_helper.isFile(_helper.getHome() + "/.local/share/applications/mimeapps.list")) return _helper.getHome() + "/.local/share/applications/mimeapps.list"
-        else if (_helper.isFile(_helper.getHome() + "/.config/mimeapps.list")) return _helper.getHome() + "/.config/mimeapps.list"
-    }
+    property string mimeappslist
     property string defaultslist:  _helper.getHome() + "/.local/share/applications/defaults.list"
+    property bool mimeAppsListExist
+
+    function mimeAppsListReread() {
+        if (_helper.isFile(_helper.getHome() + "/.local/share/applications/mimeapps.list"))
+            mimeappslist = _helper.getHome() + "/.local/share/applications/mimeapps.list"
+        else if (_helper.isFile(_helper.getHome() + "/.config/mimeapps.list"))
+            mimeappslist = _helper.getHome() + "/.config/mimeapps.list"
+        else
+            mimeappslist = ""
+
+        mimeAppsListExist = _helper.isFile(mimeappslist)
+    }
+
+    Component.onCompleted: {
+        mimeAppsListReread()
+    }
 
     RemorsePopup { id: remorse }
 
-    // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
         anchors.fill: parent
 
-        // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
         PullDownMenu {
             MenuItem {
                 text: qsTr("About")
@@ -56,24 +67,28 @@ Page {
             MenuItem {
                 id: resetAllMenuItem
                 text: qsTr("Set everything to defaults")
-                visible: _helper.isFile(mimeappslist)
+                visible: mimeAppsListExist
                 onClicked: {
                     remorse.execute("Resetting everything", function() {
                         if (_helper.isFile(mimeappslist)) _helper.remove(mimeappslist)
                         if (_helper.isFile(defaultslist) || _helper.isLink(defaultslist)) _helper.remove(defaultslist)
+                        mimeAppsListReread()
+                        config.value = [{}]
+                        var list = column.children
+                        for (var i in list) {
+                            if (list[i].objectName === "appItem")
+                                list[i].reset()
+                        }
                     } )
                 }
             }
             MenuItem {
                 id: manualEditMenuItem
                 text: qsTr("Manual edit")
-                visible: {
-                    if (_helper.isFile(mimeappslist)) return true
-                    else return false
-                }
+                visible: mimeAppsListExist
                 onClicked: {
-                    mainWindow.infoBanner.showText(qsTr("Opening..."));
-                    _helper.openFileWith("xdg-open",mimeappslist);
+                    infoBanner.showText(qsTr("Opening..."));
+                    Qt.openUrlExternally(mimeappslist)
                 }
             }
         }
@@ -87,259 +102,73 @@ Page {
             id: column
 
             width: page.width
-            spacing: Theme.paddingLarge
             PageHeader {
                 title: qsTr("Set default apps")
             }
-            Row {
-                width: parent.width
-                IconButton {
-                    id: browserIcon
-                    icon.source: "image://theme/icon-launcher-browser"
-                    width: Theme.iconSizeLauncher
-                    height: Theme.iconSizeLauncher
-                    x: Theme.paddingLarge
-                }
 
-                ValueButton {
-                    id: browserChooseBtn
-                    label: qsTr("Browser")
-                    value: qsTr("Change")
-                    property string exec
-                    onClicked: {
-                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
-                        selector.selected.connect(function(name,icon,exec,desktop) {
-                            if (name !== "Default") {
-                                browserChooseBtn.value = name;
-                                if (icon.length !== 0) browserIcon.icon.source = icon;
-//                                if ((exec.indexOf("%u") !=-1) || (exec.indexOf("%U") != -1)) {
-//                                    browserChooseBtn.exec = exec;
-//                                }
-//                                else { browserChooseBtn.exec = exec + " '%U'"; }
-                                console.debug("Selected: " + browserChooseBtn.value + " with desktopfile: " + desktop + " and icon image: " + icon)
-                                //_helper.setDefaultBrowser(browserChooseBtn.exec);
-                                var desktopfile = desktop.substring(desktop.lastIndexOf('/') + 1)
-                                _helper.setMime("text/html", desktopfile);
-                                _helper.setMime("x-maemo-urischeme/http", desktopfile);
-                                _helper.setMime("x-maemo-urischeme/https", desktopfile);
-                            }
-                            else {
-                                browserChooseBtn.value = qsTr("Change");
-                                browserChooseBtn.exec = exec
-                                browserIcon.icon.source = "image://theme/icon-launcher-browser"
-                                console.debug("Resetted browser to default")
-                                //_helper.remove(_helper.getHome() + "/.local/share/applications/open-url.desktop")
-                                _helper.setMime("text/html", "open-url.desktop");
-                                _helper.setMime("x-maemo-urischeme/http", "open-url.desktop");
-                                _helper.setMime("x-maemo-urischeme/https", "open-url.desktop");
-                            }
-                        })
-                    }
+            AppItem {
+                id: appItem
+                label: qsTr("Browser")
+                defaultValue: qsTr("Change")
+                defaultIconSource: "image://theme/icon-launcher-browser"
+                customMimeTypeList: ["text/html", "x-scheme-handler/http", "x-scheme-handler/https"]
+                onDefaultSelected: {
+                    setMimeList(defaultMimeTypeList, "open-url.desktop")
                 }
             }
-            Row {
-                width: parent.width
-                IconButton {
-                    id: imageViewerIcon
-                    icon.source: "image://theme/icon-launcher-gallery"
-                    width: Theme.iconSizeLauncher
-                    height: Theme.iconSizeLauncher
-                    x: Theme.paddingLarge
-                }
-
-                ValueButton {
-                    id: imageChooseBtn
-                    label: qsTr("Image Viewer")
-                    value: qsTr("Change")
-                    property string desktop
-                    onClicked: {
-                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
-                        selector.selected.connect(function(name,icon,exec,desktop) {
-                            if (name !== "Default") {
-                                imageChooseBtn.value = name;
-                                if (icon.length !== 0) imageViewerIcon.icon.source = icon;
-                                imageChooseBtn.desktop = desktop;
-                                console.debug("Selected: " + imageChooseBtn.value + " with desktopfile: " + imageChooseBtn.desktop + " and icon image: " + icon)
-                                var desktopfile = imageChooseBtn.desktop.substring(imageChooseBtn.desktop.lastIndexOf('/') + 1)
-                                _helper.setMime("image/jpeg",desktopfile)
-                                _helper.setMime("image/gif", desktopfile)
-                                _helper.setMime("image/png", desktopfile)
-                            }
-                            else {
-                                imageChooseBtn.value = qsTr("Change");
-                                imageChooseBtn.desktop = desktop
-                                imageViewerIcon.icon.source = "image://theme/icon-launcher-gallery"
-                                console.debug("Resetted image viewer to default")
-                                _helper.setMime("image/jpeg", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("image/gif", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("image/png", "jolla-gallery-openfile.desktop")
-                            }
-                        })
-                    }
+            AppItem {
+                label: qsTr("Image Viewer")
+                defaultValue: qsTr("Change")
+                defaultIconSource: "image://theme/icon-launcher-gallery"
+                customMimeTypeList: ["image/bmp", "image/jpeg", "image/gif", "image/png", "image/tiff"]
+                onDefaultSelected: {
+                    setMimeList(defaultMimeTypeList, "jolla-gallery-openfile.desktop")
                 }
             }
-            Row {
-                width: parent.width
-                IconButton {
-                    id: musicIcon
-                    icon.source: "image://theme/icon-launcher-mediaplayer"
-                    width: Theme.iconSizeLauncher
-                    height: Theme.iconSizeLauncher
-                    x: Theme.paddingLarge
-                }
 
-                ValueButton {
-                    id: musicChooseBtn
-                    label: qsTr("Music Player")
-                    value: qsTr("Change")
-                    property string desktop
-                    onClicked: {
-                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
-                        selector.selected.connect(function(name,icon,exec,desktop) {
-                            if (name !== "Default") {
-                                musicChooseBtn.value = name;
-                                if (icon.length !== 0) musicIcon.icon.source = icon;
-                                musicChooseBtn.desktop = desktop;
-                                console.debug("Selected: " + musicChooseBtn.value + " with desktopfile: " + musicChooseBtn.desktop + " and icon image: " + icon)
-                                var desktopfile = musicChooseBtn.desktop.substring(musicChooseBtn.desktop.lastIndexOf('/') + 1)
-                                _helper.setMime("audio/aac", desktopfile)
-                                _helper.setMime("audio/flac", desktopfile)
-                                _helper.setMime("audio/mp4", desktopfile)
-                                _helper.setMime("audio/mpeg", desktopfile)
-                                _helper.setMime("audio/ogg", desktopfile)
-                                _helper.setMime("audio/x-vorbis+ogg", desktopfile)
-                                _helper.setMime("audio/x-wav", desktopfile)
-                            }
-                            else {
-                                musicChooseBtn.value = qsTr("Change");
-                                musicChooseBtn.desktop = desktop
-                                musicIcon.icon.source = "image://theme/icon-launcher-mediaplayer"
-                                console.debug("Resetted music player to default")
-                                _helper.setMime("audio/aac", "jolla-mediaplayer-openfile.desktop")
-                                _helper.setMime("audio/flac", "jolla-mediaplayer-openfile.desktop")
-                                _helper.setMime("audio/mp4", "jolla-mediaplayer-openfile.desktop")
-                                _helper.setMime("audio/mpeg", "jolla-mediaplayer-openfile.desktop")
-                                _helper.setMime("audio/ogg", "jolla-mediaplayer-openfile.desktop")
-                                _helper.setMime("audio/x-vorbis+ogg", "jolla-mediaplayer-openfile.desktop")
-                                _helper.setMime("audio/x-wav", "jolla-mediaplayer-openfile.desktop")
-                            }
-                        })
-                    }
+            AppItem {
+                label: qsTr("Music Player")
+                defaultValue: qsTr("Change")
+                defaultIconSource: "image://theme/icon-launcher-mediaplayer"
+                customMimeTypeList: ["audio/aac", "audio/flac", "audio/mp4", "audio/mpeg", "audio/ogg", "audio/x-vorbis+ogg", "audio/x-wav"]
+                onDefaultSelected: {
+                    setMimeList(defaultMimeTypeList, "jolla-mediaplayer-openfile.desktop")
                 }
             }
-            Row {
-                width: parent.width
-                IconButton {
-                    id: videoIcon
-                    icon.source: "image://theme/icon-launcher-gallery"
-                    width: Theme.iconSizeLauncher
-                    height: Theme.iconSizeLauncher
-                    x: Theme.paddingLarge
-                }
 
-                ValueButton {
-                    id: videoChooseBtn
-                    label: qsTr("Video Player")
-                    value: qsTr("Change")
-                    property string desktop
-                    onClicked: {
-                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
-                        selector.selected.connect(function(name,icon,exec,desktop) {
-                            if (name !== "Default") {
-                                videoChooseBtn.value = name;
-                                if (icon.length !== 0) videoIcon.icon.source = icon;
-                                videoChooseBtn.desktop = desktop;
-                                console.debug("Selected: " + videoChooseBtn.value + " with desktopfile: " + videoChooseBtn.desktop + " and icon image: " + icon)
-                                var desktopfile = videoChooseBtn.desktop.substring(videoChooseBtn.desktop.lastIndexOf('/') + 1)
-                                _helper.setMime("video/mp4", desktopfile)
-                                _helper.setMime("video/dv", desktopfile)
-                                _helper.setMime("video/mp2t", desktopfile)
-                                _helper.setMime("video/mp4v-es", desktopfile)
-                                _helper.setMime("video/mpeg", desktopfile)
-                                _helper.setMime("video/msvideo", desktopfile)
-                                _helper.setMime("video/quicktime", desktopfile)
-                                _helper.setMime("video/vnd.rn-realvideo", desktopfile)
-                                _helper.setMime("video/webm", desktopfile)
-                                _helper.setMime("video/x-avi", desktopfile)
-                                _helper.setMime("video/x-flv", desktopfile)
-                                _helper.setMime("video/x-matroska", desktopfile)
-                                _helper.setMime("video/x-mpeg", desktopfile)
-                                _helper.setMime("video/x-ms-asf", desktopfile)
-                                _helper.setMime("video/x-ms-wmv", desktopfile)
-                                _helper.setMime("video/x-msvideo", desktopfile)
-                                _helper.setMime("video/x-ogm+ogg", desktopfile)
-                                _helper.setMime("x-maemo-urischeme/mms", desktopfile)
-                                _helper.setMime("x-maemo-urischeme/rtmp", desktopfile)
-                                _helper.setMime("x-maemo-urischeme/rtsp", desktopfile)
-                            }
-                            else {
-                                videoChooseBtn.value = qsTr("Change");
-                                videoChooseBtn.desktop = desktop
-                                videoIcon.icon.source = "image://theme/icon-launcher-gallery"
-                                console.debug("Resetted video player to default")
-                                _helper.setMime("video/mp4", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/dv", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/mp2t", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/mp4v-es", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/mpeg", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/msvideo", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/quicktime", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/vnd.rn-realvideo", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/webm", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-avi", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-flv", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-matroska", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-mpeg", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-ms-asf", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-ms-wmv", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-msvideo", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("video/x-ogm+ogg", "jolla-gallery-openfile.desktop")
-                                _helper.setMime("x-maemo-urischeme/mms", "jolla-gallery-playvideostream.desktop")
-                                _helper.setMime("x-maemo-urischeme/rtmp", "jolla-gallery-playvideostream.desktop")
-                                _helper.setMime("x-maemo-urischeme/rtsp", "jolla-gallery-playvideostream.desktop")
-                            }
-                        })
-                    }
+            AppItem {
+                label: qsTr("Video Player")
+                defaultValue: qsTr("Change")
+                defaultIconSource: "image://theme/icon-launcher-gallery"
+                defaultMimeTypeList: ["video/mp4", "video/dv", "video/mp2t", "video/mp4v-es", "video/mpeg", "video/msvideo", "video/quicktime",
+                    "video/vnd.rn-realvideo", "video/webm", "video/x-avi", "video/x-flv", "video/x-matroska", "video/x-mpeg", "video/x-ms-asf",
+                    "video/x-ms-wmv", "video/x-msvideo", "video/x-ogm+ogg"]
+                customMimeTypeList: ["video/mp4", "video/dv", "video/mp2t", "video/mp4v-es", "video/mpeg", "video/msvideo", "video/quicktime",
+                    "video/vnd.rn-realvideo", "video/webm", "video/x-avi", "video/x-flv", "video/x-matroska", "video/x-mpeg", "video/x-ms-asf",
+                    "video/x-ms-wmv", "video/x-msvideo", "video/x-ogm+ogg", "x-scheme-handler/mms", "x-scheme-handler/rtmp", "x-scheme-handler/rtsp"]
+                onDefaultSelected: {
+                    setMimeList(defaultMimeTypeList, "jolla-gallery-openfile.desktop")
+                    var schemeList = ["x-scheme-handler/mms", "x-scheme-handler/rtmp", "x-scheme-handler/rtsp"]
+                    setMimeList(schemeList, "jolla-gallery-playvideostream.desktop")
                 }
             }
-            Row {
-                width: parent.width
-                IconButton {
-                    id: textIcon
-                    icon.source: "image://theme/icon-launcher-notes"
-                    width: Theme.iconSizeLauncher
-                    height: Theme.iconSizeLauncher
-                    x: Theme.paddingLarge
-                }
 
-                ValueButton {
-                    id: textChooseBtn
-                    label: qsTr("Text Editor")
-                    value: qsTr("Change")
-                    property string desktop
-                    onClicked: {
-                        var selector = pageStack.push(Qt.resolvedUrl("AppsList.qml"))
-                        selector.selected.connect(function(name,icon,exec,desktop) {
-                            if (name !== "Default") {
-                                textChooseBtn.value = name;
-                                if (icon.length !== 0) textIcon.icon.source = icon;
-                                textChooseBtn.desktop = desktop;
-                                console.debug("Selected: " + textChooseBtn.value + " with desktopfile: " + textChooseBtn.desktop + " and icon image: " + icon)
-                                var desktopfile = textChooseBtn.desktop.substring(textChooseBtn.desktop.lastIndexOf('/') + 1)
-                                _helper.setMime("text/plain", desktopfile)
-                            }
-                            else {
-                                textChooseBtn.value = qsTr("Change");
-                                textChooseBtn.desktop = desktop
-                                textIcon.icon.source = "image://theme/icon-launcher-notes"
-                                console.debug("Resetted text editor to default")
-                                _helper.setMime("text/plain", "jolla-notes-import.desktop")
-                            }
-                        })
-                    }
+            AppItem {
+                label: qsTr("Text Editor")
+                defaultValue: qsTr("Change")
+                defaultIconSource: "image://theme/icon-launcher-notes"
+                defaultMimeTypeList: ["text/plain"]
+                customMimeTypeList: ["text/plain", "text/x-c", "text/x-c++"]
+                onDefaultSelected: {
+                    setMimeList(defaultMimeTypeList, "jolla-notes-import.desktop")
                 }
             }
         }
+    }
+
+    InfoBanner {
+        id: infoBanner
+        z:1
     }
 }
 

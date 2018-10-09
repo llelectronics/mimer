@@ -13,8 +13,8 @@
 TARGET = harbour-mimer
 
 CONFIG += sailfishapp
-
-PKGCONFIG += mlite5
+PKGCONFIG += mlite5 contentaction5
+INCLUDEPATH += /usr/include
 
 SOURCES += src/harbour-mimer.cpp \
     src/desktopfilesortmodel.cpp \
@@ -26,14 +26,14 @@ OTHER_FILES += qml/harbour-mimer.qml \
     qml/pages/FirstPage.qml \
     rpm/harbour-mimer.changes.in \
     rpm/harbour-mimer.spec \
-    rpm/harbour-mimer.yaml \
     translations/*.ts \
     harbour-mimer.desktop \
     qml/pages/AboutPage.qml \
     qml/pages/AppsList.qml \
     qml/pages/BrowserList.qml \
     qml/pages/CreditsModel.qml \
-    qml/pages/InfoBanner.qml
+    qml/pages/InfoBanner.qml \
+    qml/components/AppItem.qml
 
 # to disable building translations every time, comment out the
 # following CONFIG line
