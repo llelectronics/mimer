@@ -93,14 +93,19 @@ class Helper : public QObject
         int setMime(const QString &mimeType, const QString &desktopFile)
         {
             QString desktopAction = desktopFile.section(".desktop", 0, 0);
-            QList<ContentAction::Action> actionList = ContentAction::actionsForMime(mimeType);
-            foreach (ContentAction::Action action, actionList) {
-                if (action.name().startsWith(desktopAction) && // jolla apps use desktopAction-openfile/-openurl/-playvideostream mime handlers
-                    !action.name().startsWith("open-url-webcat")) { // exclude strange webcat mime handler
-                    desktopAction = action.name();
+            if (desktopAction.startsWith("harbour-webcat")) {
+                desktopAction = "harbour-webcat-open-url";
+            } else if (desktopAction == "sailfish-browser") {
+                desktopAction = "open-url";
+            } else {
+                QList<ContentAction::Action> actionList = ContentAction::actionsForMime(mimeType);
+                foreach (ContentAction::Action action, actionList) {
+                    if (action.name().startsWith(desktopAction))// jolla apps use desktopAction-openfile/-openurl/-playvideostream mime handlers
+                        desktopAction = action.name();
                     break;
                 }
             }
+
             ContentAction::setMimeDefault(mimeType, desktopAction);
 
             return 0;
