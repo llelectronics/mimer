@@ -688,7 +688,7 @@ ApplicationWindow
     allowedOrientations: defaultAllowedOrientations
     _defaultPageOrientations: allowedOrientations
 
-    property string version: "0.1.6"
+    property string version: "0.1.7"
     property string appname: "Mimer"
     property string appicon: "image://theme/harbour-mimer"
 
